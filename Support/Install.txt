@@ -1,0 +1,39 @@
+TameWheel · 小滚轮
+
+安装
+1. 将 TameWheel.app 拖入 Applications（应用程序）。
+2. 推出磁盘映像，从“应用程序”打开小滚轮。
+3. 首次开启面板开关时，按提示到“系统设置 → 隐私与安全性 → 辅助功能”，允许小滚轮。
+
+首次打开
+这是采用临时签名的公开测试版，尚未经过 Apple 公证。
+如果系统提示无法验证开发者或无法检查恶意软件，请确认文件来自项目官方 Release。
+尝试打开后，在“系统设置 → 隐私与安全性”中找到小滚轮的提示，选择“仍要打开”，再确认打开。
+此操作仅允许这个应用。不要从磁盘映像内直接授权或运行应用。
+
+要求：macOS 13 及以上。安装包包含 Apple Silicon 和 Intel 两种架构。
+已在 Apple Silicon / macOS 27 上实测；Intel 和更早系统尚待实机验证。
+系统保持自然滚动开启时，启用小滚轮可获得熟悉的 Windows 滚轮方向。
+适用于普通鼠标的垂直离散滚轮，触控板保持原样。
+
+项目与反馈：https://github.com/gitman-g1/TameWheel
+详细说明：https://github.com/gitman-g1/TameWheel/blob/main/docs/install.md
+
+Installation
+1. Drag TameWheel.app into Applications.
+2. Eject the disk image, then open TameWheel from Applications.
+3. Turn on its menu bar switch and allow it in System Settings → Privacy & Security → Accessibility.
+
+First launch
+This public testing build is ad-hoc signed and has not been notarized by Apple.
+If macOS cannot verify the developer or check the app for malicious software, confirm that you downloaded it from the project's official Release.
+After attempting to open it, go to System Settings → Privacy & Security, choose Open Anyway for TameWheel, and confirm.
+This creates an exception for this app only. Install it in Applications before granting permission.
+
+Requires macOS 13 or later. Both Apple Silicon and Intel binaries are included.
+Tested on Apple Silicon / macOS 27; Intel and earlier macOS versions still need hardware testing.
+For Windows-style wheel direction, leave macOS Natural Scrolling enabled.
+Supports standard, discrete vertical mouse wheels while preserving trackpad behavior.
+
+Full instructions: https://github.com/gitman-g1/TameWheel/blob/main/docs/install.en.md
+Apple guidance: https://support.apple.com/102445

@@ -3,10 +3,15 @@ set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_DIR"
+CONFIGURATION="${1:-debug}"
+case "$CONFIGURATION" in
+    debug|release) ;;
+    *) printf 'Usage: bash scripts/test.sh [debug|release]\n' >&2; exit 1 ;;
+esac
 mkdir -p .build/cache .build/clang-module-cache
 export CLANG_MODULE_CACHE_PATH="$PROJECT_DIR/.build/clang-module-cache"
 
-TEST_OPTIONS=(--cache-path "$PROJECT_DIR/.build/cache")
+TEST_OPTIONS=(--configuration "$CONFIGURATION" --cache-path "$PROJECT_DIR/.build/cache")
 SWIFT_COMPILER="$(xcrun --find swiftc)"
 TEST_PLUGIN="$(dirname "$SWIFT_COMPILER")/../lib/swift/host/plugins/testing/libTestingMacros.dylib"
 # 部分 Command Line Tools 的 Swift Build 未自动加载自带的 Testing 宏。

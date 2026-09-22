@@ -5,9 +5,14 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_DIR"
 
 CONFIGURATION="${1:-debug}"
+ARCHITECTURE="${3:-native}"
 case "$CONFIGURATION" in
     debug|release) ;;
-    *) printf 'Usage: bash scripts/build-app.sh [debug|release] [output-directory]\n' >&2; exit 1 ;;
+    *) printf 'Usage: bash scripts/build-app.sh [debug|release] [output-directory] [native|arm64|x86_64]\n' >&2; exit 1 ;;
+esac
+case "$ARCHITECTURE" in
+    native|arm64|x86_64) ;;
+    *) printf 'Unsupported architecture: %s\n' "$ARCHITECTURE" >&2; exit 1 ;;
 esac
 
 # 将编译缓存留在项目内，方便清理，也避免依赖全局缓存目录。
@@ -15,6 +20,9 @@ mkdir -p .build/cache .build/clang-module-cache
 export CLANG_MODULE_CACHE_PATH="$PROJECT_DIR/.build/clang-module-cache"
 
 BUILD_OPTIONS=(--configuration "$CONFIGURATION" --cache-path "$PROJECT_DIR/.build/cache")
+if [[ "$ARCHITECTURE" != native ]]; then
+    BUILD_OPTIONS+=(--arch "$ARCHITECTURE")
+fi
 xcrun swift build "${BUILD_OPTIONS[@]}"
 BINARY_DIR="$(xcrun swift build "${BUILD_OPTIONS[@]}" --show-bin-path)"
 APP_DIR="${2:-$PROJECT_DIR/dist}/TameWheel.app"
