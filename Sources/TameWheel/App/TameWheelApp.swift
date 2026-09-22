@@ -1,7 +1,7 @@
 import AppKit
 
 @main
-struct ScrollMateApp {
+struct TameWheelApp {
     @MainActor static func main() {
         let application = NSApplication.shared
         let delegate = AppDelegate()

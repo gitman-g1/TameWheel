@@ -1,14 +1,14 @@
 import CoreGraphics
 import Foundation
 import Testing
-@testable import ScrollMate
+@testable import TameWheel
 
 @Test func trackpadAndMomentumAreNeverTransformed() {
     for continuous in [false, true] {
         for phase: Int64 in [0, 1, 2, 4, 8, 128] {
             for momentum: Int64 in [0, 1, 2, 3] {
                 guard continuous || phase != 0 || momentum != 0 else { continue }
-                var transformer = ScrollTransformer()
+                let transformer = ScrollTransformer()
                 let input = ScrollInput(isContinuous: continuous, scrollPhase: phase,
                     momentumPhase: momentum, lines: -8, preciseLines: -8.5, pixels: -85)
                 #expect(transformer.transform(input, settings: ScrollSettings()) == nil)
@@ -18,7 +18,7 @@ import Testing
 }
 
 @Test func syntheticZoomAndAmbiguousCountPassThrough() {
-    var transformer = ScrollTransformer()
+    let transformer = ScrollTransformer()
     for input in [
         ScrollInput(scrollCount: 1, lines: 3),
         ScrollInput(isSynthetic: true, lines: 3),
@@ -29,7 +29,7 @@ import Testing
 }
 
 @Test func fixedStepIgnoresSystemAcceleration() {
-    var transformer = ScrollTransformer()
+    let transformer = ScrollTransformer()
     for accelerated: Int64 in [1, 3, 8, 24, 90] {
         let input = ScrollInput(lines: accelerated, preciseLines: Double(accelerated),
                                 pixels: accelerated * 10, rawDelta: 1)
@@ -41,7 +41,7 @@ import Testing
 }
 
 @Test func coalescedRawStepsArePreserved() {
-    var transformer = ScrollTransformer()
+    let transformer = ScrollTransformer()
     let output = transformer.transform(
         ScrollInput(lines: -12, preciseLines: -12, pixels: -120, rawDelta: -4),
         settings: ScrollSettings())
@@ -49,7 +49,7 @@ import Testing
 }
 
 @Test func legacyDriverHasBoundedCompatibilityStep() {
-    var transformer = ScrollTransformer()
+    let transformer = ScrollTransformer()
     for raw in [0.0, 0.25, 65536] {
         let output = transformer.transform(ScrollInput(lines: 80, rawDelta: raw), settings: ScrollSettings())
         #expect(output?.lines == -3)
@@ -57,64 +57,32 @@ import Testing
     }
 }
 
-@Test func directionCanBeKeptOrReversed() {
-    for reversed in [false, true] {
-        var settings = ScrollSettings()
-        settings.reverseMouseScrolling = reversed
-        settings.linesPerStep = 5
-        var transformer = ScrollTransformer()
-        let output = transformer.transform(ScrollInput(lines: -1, rawDelta: 1), settings: settings)
-        #expect(output?.lines == (reversed ? 5 : -5))
+@Test func directionIsReversedInBothDirections() {
+    let transformer = ScrollTransformer()
+    for direction: Int64 in [-1, 1] {
+        let output = transformer.transform(
+            ScrollInput(lines: direction, rawDelta: Double(direction)), settings: ScrollSettings())
+        #expect(output?.lines == -direction * 3)
+        #expect(output?.pixels == -direction * 30)
     }
 }
 
-@Test func slowMultiplierAccumulatesFractionalLines() {
-    var settings = ScrollSettings()
-    settings.scrollingMode = .system
-    settings.speedMultiplier = 0.25
-    settings.reverseMouseScrolling = false
-    var transformer = ScrollTransformer()
-    let sample = ScrollInput(lines: 1, preciseLines: 1, pixels: 10)
-    let outputs = (0..<4).compactMap { _ in transformer.transform(sample, settings: settings) }
-    #expect(outputs.map(\.lines).reduce(0, +) == 1)
-    #expect(outputs.map(\.pixels).reduce(0, +) == 10)
-    #expect(outputs.allSatisfy { $0.preciseLines == 0.25 })
+@Test func disabledAndZeroInputPassThrough() {
+    let transformer = ScrollTransformer()
+    #expect(transformer.transform(ScrollInput(), settings: ScrollSettings()) == nil)
+    #expect(transformer.transform(ScrollInput(lines: 1), settings: ScrollSettings(isEnabled: false)) == nil)
 }
 
-@Test func directionChangeClearsFractionalCarry() {
-    var settings = ScrollSettings()
-    settings.scrollingMode = .system
-    settings.reverseMouseScrolling = false
-    settings.speedMultiplier = 0.75
-    var transformer = ScrollTransformer()
-    _ = transformer.transform(ScrollInput(lines: 1, preciseLines: 1), settings: settings)
-    _ = transformer.transform(ScrollInput(lines: -1, preciseLines: -1), settings: settings)
-    let next = transformer.transform(ScrollInput(lines: -1, preciseLines: -1), settings: settings)
-    #expect(next?.lines == -1)
-}
-
-@Test func disabledZeroAndUnchangedSettingsPassThrough() {
-    var transformer = ScrollTransformer()
-    var settings = ScrollSettings()
-    #expect(transformer.transform(ScrollInput(), settings: settings) == nil)
-    settings.isEnabled = false
-    #expect(transformer.transform(ScrollInput(lines: 1), settings: settings) == nil)
-    settings.isEnabled = true
-    settings.scrollingMode = .system
-    settings.reverseMouseScrolling = false
-    #expect(transformer.transform(ScrollInput(lines: 1), settings: settings) == nil)
-}
-
-@Test func malformedInputCannotOverflow() {
-    var transformer = ScrollTransformer()
+@Test func malformedAndExtremeInputCannotOverflow() {
+    let transformer = ScrollTransformer()
     #expect(transformer.transform(ScrollInput(preciseLines: .nan), settings: ScrollSettings()) == nil)
     #expect(transformer.transform(ScrollInput(lines: 1, rawDelta: .infinity), settings: ScrollSettings()) == nil)
-    var settings = ScrollSettings()
-    settings.scrollingMode = .system
-    settings.speedMultiplier = 3
-    let output = transformer.transform(ScrollInput(lines: .min, preciseLines: -1e100, pixels: .min), settings: settings)
-    #expect(output?.lines == 32767)
-    #expect(output?.preciseLines == 32767)
+    let output = transformer.transform(
+        ScrollInput(lines: .min, preciseLines: -1e100, pixels: .min, rawDelta: -64),
+        settings: ScrollSettings())
+    #expect(output?.lines == 192)
+    #expect(output?.preciseLines == 192)
+    #expect(output?.pixels == 1920)
 }
 
 private func wheelEvent() throws -> CGEvent {
@@ -135,7 +103,7 @@ private func wheelEvent() throws -> CGEvent {
         let event = try wheelEvent()
         event.setIntegerValueField(field, value: 1)
         let before = try #require(event.data) as Data
-        var adapter = ScrollEventAdapter()
+        let adapter = ScrollEventAdapter()
         #expect(adapter.apply(to: event, settings: ScrollSettings()) == nil)
         let after = try #require(event.data) as Data
         #expect(before == after)
@@ -148,7 +116,7 @@ private func wheelEvent() throws -> CGEvent {
         .scrollWheelEventPointDeltaAxis2, .scrollWheelEventRawDeltaAxis2, .scrollWheelEventDeltaAxis3,
         .scrollWheelEventIsContinuous, .scrollWheelEventScrollPhase, .scrollWheelEventMomentumPhase]
     let before = untouched.map { event.getIntegerValueField($0) }
-    var adapter = ScrollEventAdapter()
+    let adapter = ScrollEventAdapter()
     #expect(adapter.apply(to: event, settings: ScrollSettings()) != nil)
     #expect(event.getIntegerValueField(.scrollWheelEventDeltaAxis1) == -3)
     #expect(event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis1) == -3)
@@ -164,28 +132,36 @@ private func wheelEvent() throws -> CGEvent {
     let before = try #require(event.data) as Data
     var settings = ScrollSettings()
     settings.isEnabled = false
-    var adapter = ScrollEventAdapter()
+    let adapter = ScrollEventAdapter()
     #expect(adapter.apply(to: event, settings: settings) == nil)
     #expect(try #require(event.data) as Data == before)
 }
 
-@Test func preferencesRoundTripAndInvalidValuesRecover() throws {
-    let suite = "local.scrollmate.tests.\(UUID().uuidString)"
+@Test func enabledPreferenceSurvivesReload() throws {
+    let suite = "local.tamewheel.tests.\(UUID().uuidString)"
     let defaults = try #require(UserDefaults(suiteName: suite))
     defer { defaults.removePersistentDomain(forName: suite) }
     let store = SettingsStore(defaults: defaults)
-    var settings = ScrollSettings()
-    settings.isEnabled = false
-    settings.reverseMouseScrolling = false
-    settings.linesPerStep = 7
-    settings.scrollingMode = .system
-    settings.speedMultiplier = 1.75
-    store.save(settings)
-    #expect(store.load() == settings)
-    defaults.set(-99, forKey: "mouse.linesPerStep")
-    defaults.set(1e50, forKey: "mouse.speedMultiplier")
-    defaults.set("invalid", forKey: "mouse.scrollingMode")
-    #expect(store.load().linesPerStep == 3)
-    #expect(store.load().speedMultiplier == 1)
-    #expect(store.load().scrollingMode == .fixedStep)
+    #expect(store.load().isEnabled)
+    for enabled in [false, true] {
+        store.save(ScrollSettings(isEnabled: enabled))
+        #expect(SettingsStore(defaults: defaults).load().isEnabled == enabled)
+    }
+}
+
+@Test func legacyTuningDoesNotChangeTheFixedFeel() throws {
+    let suite = "local.tamewheel.tests.\(UUID().uuidString)"
+    let defaults = try #require(UserDefaults(suiteName: suite))
+    defer { defaults.removePersistentDomain(forName: suite) }
+    defaults.set(false, forKey: "mouse.reverseScrolling")
+    defaults.set("system", forKey: "mouse.scrollingMode")
+    defaults.set(12, forKey: "mouse.linesPerStep")
+    defaults.set(2.5, forKey: "mouse.speedMultiplier")
+    let store = SettingsStore(defaults: defaults)
+    let transformer = ScrollTransformer()
+    let output = transformer.transform(ScrollInput(lines: 20, rawDelta: 1), settings: store.load())
+    #expect(output?.lines == -3)
+    #expect(output?.pixels == -30)
+    defaults.set(false, forKey: "mouse.isEnabled")
+    #expect(transformer.transform(ScrollInput(lines: 20), settings: store.load()) == nil)
 }

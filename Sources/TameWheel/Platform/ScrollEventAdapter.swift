@@ -2,9 +2,7 @@ import CoreGraphics
 
 /// 只回写被明确选中的垂直滚轮字段；保留事件对象、位置、修饰键及横向数据。
 struct ScrollEventAdapter {
-    private var transformer = ScrollTransformer()
-
-    mutating func reset() { transformer.reset() }
+    private let transformer = ScrollTransformer()
 
     func input(from event: CGEvent) -> ScrollInput {
         ScrollInput(
@@ -23,7 +21,7 @@ struct ScrollEventAdapter {
     }
 
     @discardableResult
-    mutating func apply(to event: CGEvent, settings: ScrollSettings) -> ScrollOutput? {
+    func apply(to event: CGEvent, settings: ScrollSettings) -> ScrollOutput? {
         guard let output = transformer.transform(input(from: event), settings: settings) else {
             return nil
         }

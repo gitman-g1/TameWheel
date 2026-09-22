@@ -17,10 +17,10 @@ export CLANG_MODULE_CACHE_PATH="$PROJECT_DIR/.build/clang-module-cache"
 BUILD_OPTIONS=(--configuration "$CONFIGURATION" --cache-path "$PROJECT_DIR/.build/cache")
 xcrun swift build "${BUILD_OPTIONS[@]}"
 BINARY_DIR="$(xcrun swift build "${BUILD_OPTIONS[@]}" --show-bin-path)"
-APP_DIR="${2:-$PROJECT_DIR/dist}/ScrollMate.app"
+APP_DIR="${2:-$PROJECT_DIR/dist}/TameWheel.app"
 
 mkdir -p "$APP_DIR/Contents/MacOS"
-cp "$BINARY_DIR/ScrollMate" "$APP_DIR/Contents/MacOS/ScrollMate"
+cp "$BINARY_DIR/TameWheel" "$APP_DIR/Contents/MacOS/TameWheel"
 cp Support/Info.plist "$APP_DIR/Contents/Info.plist"
 
 # 本机临时签名，不依赖 Apple 开发者账号，也不等同于公证。

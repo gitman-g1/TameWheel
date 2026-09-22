@@ -17,14 +17,14 @@ final class MenuBarController: NSObject, NSWindowDelegate {
     init(state: AppState) {
         self.state = state
         hosting = NSHostingView(rootView: MenuBarView(state: state))
-        let size = NSSize(width: 380, height: 600)
+        let size = NSSize(width: 220, height: 44)
         panel = SettingsPanel(
             contentRect: NSRect(origin: .zero, size: size),
             styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false
         )
         super.init()
-        panel.title = "ScrollMate"
-        panel.setAccessibilityLabel("ScrollMate 设置")
+        panel.title = "小滚轮"
+        panel.setAccessibilityLabel("小滚轮 · TameWheel")
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.hasShadow = true
@@ -39,7 +39,12 @@ final class MenuBarController: NSObject, NSWindowDelegate {
         if #available(macOS 26.0, *) {
             let glass = NSGlassEffectView(frame: hosting.frame)
             glass.style = .regular
-            glass.cornerRadius = 26
+            // 减少底色叠加；深色仍保留足够底色，保证亮背景上的文字对比度。
+            glass.tintColor = NSColor(name: nil) { appearance in
+                let isDark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+                return .windowBackgroundColor.withAlphaComponent(isDark ? 0.55 : 0.15)
+            }
+            glass.cornerRadius = 14
             glass.contentView = hosting
             panel.contentView = glass
         } else {
@@ -48,7 +53,7 @@ final class MenuBarController: NSObject, NSWindowDelegate {
             material.blendingMode = .behindWindow
             material.state = .active
             material.wantsLayer = true
-            material.layer?.cornerRadius = 22
+            material.layer?.cornerRadius = 14
             material.layer?.masksToBounds = true
             material.addSubview(hosting)
             panel.contentView = material
@@ -61,21 +66,34 @@ final class MenuBarController: NSObject, NSWindowDelegate {
             }
         }
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "computermouse", accessibilityDescription: "ScrollMate")
+            button.image = NSImage(systemSymbolName: "computermouse", accessibilityDescription: "小滚轮 · TameWheel")
             button.image?.isTemplate = true
-            button.toolTip = "ScrollMate · 鼠标滚轮设置"
+            button.toolTip = "小滚轮 · TameWheel"
             button.target = self
             button.action = #selector(toggle)
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
     }
 
-    @objc private func toggle() { panel.isVisible ? hide() : show() }
+    @objc private func toggle() {
+        if NSApp.currentEvent?.type == .rightMouseUp {
+            hide()
+            let menu = NSMenu()
+            menu.addItem(withTitle: "退出小滚轮", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+            if let button = statusItem.button {
+                menu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.minY - 6), in: button)
+            }
+        } else {
+            panel.isVisible ? hide() : show()
+        }
+    }
 
     func show() {
         state.refresh()
         positionPanel()
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
+        statusItem.button?.highlight(true)
         if outsideClick == nil && !state.isPreview {
             outsideClick = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) {
                 [weak self] _ in self?.hide()
@@ -113,6 +131,7 @@ final class MenuBarController: NSObject, NSWindowDelegate {
 
     func hide() {
         panel.orderOut(nil)
+        statusItem.button?.highlight(false)
         if let outsideClick { NSEvent.removeMonitor(outsideClick) }
         if let localClick { NSEvent.removeMonitor(localClick) }
         outsideClick = nil

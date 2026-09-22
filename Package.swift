@@ -2,13 +2,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "ScrollMate",
+    name: "TameWheel",
     platforms: [.macOS(.v13)],
     products: [
-        .executable(name: "ScrollMate", targets: ["ScrollMate"])
+        .executable(name: "TameWheel", targets: ["TameWheel"])
     ],
     targets: [
-        .executableTarget(name: "ScrollMate"),
-        .testTarget(name: "ScrollMateTests", dependencies: ["ScrollMate"])
+        .executableTarget(name: "TameWheel"),
+        .testTarget(name: "TameWheelTests", dependencies: ["TameWheel"])
     ]
 )

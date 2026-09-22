@@ -5,19 +5,22 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>zh_CN</string>
     <key>CFBundleExecutable</key>
-    <string>ScrollMate</string>
+    <string>TameWheel</string>
+    <!-- 保留已有应用标识，延续本地偏好；产品展示名称为 TameWheel。 -->
     <key>CFBundleIdentifier</key>
     <string>local.scrollmate.app</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>ScrollMate</string>
+    <string>TameWheel</string>
+    <key>CFBundleDisplayName</key>
+    <string>TameWheel · 小滚轮</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.2.0</string>
+    <string>0.3.0</string>
     <key>CFBundleVersion</key>
-    <string>2</string>
+    <string>3</string>
     <key>LSMinimumSystemVersion</key>
     <string>13.0</string>
     <key>LSUIElement</key>

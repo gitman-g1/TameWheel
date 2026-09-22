@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:鼠标与触控板}",
+            "name": "Debug TameWheel",
+            "target": "TameWheel",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug TameWheel"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:鼠标与触控板}",
+            "name": "Release TameWheel",
+            "target": "TameWheel",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release TameWheel"
+        }
+    ]
+}

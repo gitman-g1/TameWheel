@@ -5,13 +5,8 @@ import ApplicationServices
 final class ScrollEventMonitor {
     private var tap: CFMachPort?
     private var source: CFRunLoopSource?
-    private var adapter = ScrollEventAdapter()
+    private let adapter = ScrollEventAdapter()
     private var settings = ScrollSettings()
-
-    private(set) var wheelEvents = 0
-    private(set) var protectedEvents = 0
-    private(set) var lastInput: InputKind?
-    private(set) var usedCompatibilityStep = false
 
     var isRunning: Bool {
         guard let tap else { return false }
@@ -20,7 +15,6 @@ final class ScrollEventMonitor {
 
     func update(settings: ScrollSettings) {
         self.settings = settings
-        adapter.reset()
     }
 
     func start() -> Bool {
@@ -36,13 +30,7 @@ final class ScrollEventMonitor {
                     CGEvent.tapEnable(tap: tap, enable: true)
                 }
             } else if type == .scrollWheel {
-                let input = monitor.adapter.input(from: event)
-                monitor.lastInput = input.kind
-                if input.kind == .continuous { monitor.protectedEvents &+= 1 }
-                if let output = monitor.adapter.apply(to: event, settings: monitor.settings) {
-                    monitor.wheelEvents &+= 1
-                    monitor.usedCompatibilityStep = output.usedCompatibilityStep
-                }
+                monitor.adapter.apply(to: event, settings: monitor.settings)
             }
             return Unmanaged.passUnretained(event)
         }
@@ -70,7 +58,6 @@ final class ScrollEventMonitor {
         if let source { CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes) }
         source = nil
         tap = nil
-        adapter.reset()
     }
 
     deinit { stop() }

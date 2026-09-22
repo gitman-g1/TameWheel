@@ -11,7 +11,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let mainMenu = NSMenu()
         let applicationItem = NSMenuItem()
         let applicationMenu = NSMenu()
-        applicationMenu.addItem(withTitle: "退出 ScrollMate", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        applicationMenu.addItem(withTitle: "退出小滚轮", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         applicationItem.submenu = applicationMenu
         mainMenu.addItem(applicationItem)
         NSApp.mainMenu = mainMenu
