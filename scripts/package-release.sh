@@ -31,6 +31,8 @@ for ARCHITECTURE in arm64 x86_64; do
     xcrun lipo "$APP_DIR/Contents/MacOS/TameWheel" -verify_arch "$ARCHITECTURE"
 done
 plutil -lint "$APP_DIR/Contents/Info.plist"
+ICON_NAME="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIconFile' "$APP_DIR/Contents/Info.plist")"
+test -s "$APP_DIR/Contents/Resources/$ICON_NAME.icns"
 
 PACKAGE_NAME="TameWheel-$VERSION-universal"
 ditto -c -k --sequesterRsrc --keepParent "$APP_DIR" "$OUTPUT_DIR/$PACKAGE_NAME.zip"

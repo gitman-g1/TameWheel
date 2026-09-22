@@ -2,7 +2,7 @@
 
 [简体中文](README.md) | **English**
 
-[Download for macOS (public preview)](https://github.com/gitman-g1/TameWheel/releases/tag/v0.3.0) · [Installation guide](docs/install.en.md)
+[Download for macOS (public preview)](https://github.com/gitman-g1/TameWheel/releases/latest) · [Installation guide](docs/install.en.md)
 
 **A more comfortable mouse wheel. The same natural trackpad feel.**
 

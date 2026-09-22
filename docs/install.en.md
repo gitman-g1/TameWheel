@@ -6,11 +6,11 @@ Requires macOS 13 or later. The universal package includes Apple Silicon and Int
 
 ## Download and install
 
-1. Open the [GitHub Release](https://github.com/gitman-g1/TameWheel/releases/tag/v0.3.0) and download **TameWheel-0.3.0-universal.dmg** from Assets.
+1. Open the [GitHub Release](https://github.com/gitman-g1/TameWheel/releases/latest) and download **TameWheel-0.3.1-universal.dmg** from Assets.
 2. Open the DMG and drag **TameWheel.app** into **Applications**.
 3. Eject the disk image and open TameWheel from Applications. It lives in the menu bar and has no Dock icon.
 
-Alternatively, download **TameWheel-0.3.0-universal.zip**, unzip it, and move the app into Applications. GitHub's automatic `Source code` archives are not installable apps.
+Alternatively, download **TameWheel-0.3.1-universal.zip**, unzip it, and move the app into Applications. GitHub's automatic `Source code` archives are not installable apps.
 
 ## First launch
 

@@ -14,3 +14,10 @@ GitHub 发布前，先解压 ZIP、挂载 DMG，检查包内应用、签名和�
 提交对应源码后，创建指向该提交的版本标签，先创建 Release 草稿并上传附件，核对附件大小、下载地址和校验值后再发布。首版作为普通 Release 发布并设为 Latest，让仓库首页显示下载入口；标题和说明仍明确标注「公开测试版」。GitHub 的 Pre-release 不能设为 Latest，后续需要首页展示时不要勾选该选项。
 
 当前为临时签名、未公证版本。用户首次打开和升级后可能需要重新确认权限；说明见 [安装指南](install.md)。未来使用 Developer ID 签名和公证时，需要更新构建脚本及安装说明。
+
+应用图标为独立绘制的鼠标图案，存放在 `Support/AppIcon.icns`，构建时复制到应用的 `Contents/Resources/`。修改图案后，用以下命令重新生成；图标与 `CFBundleIconFile` 配置都需要保留在发布包中。
+
+```sh
+xcrun swift -module-cache-path .build/icon-module-cache scripts/render-app-icon.swift
+xcrun iconutil -c icns .build/AppIcon.iconset -o Support/AppIcon.icns
+```

@@ -27,9 +27,10 @@ xcrun swift build "${BUILD_OPTIONS[@]}"
 BINARY_DIR="$(xcrun swift build "${BUILD_OPTIONS[@]}" --show-bin-path)"
 APP_DIR="${2:-$PROJECT_DIR/dist}/TameWheel.app"
 
-mkdir -p "$APP_DIR/Contents/MacOS"
+mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
 cp "$BINARY_DIR/TameWheel" "$APP_DIR/Contents/MacOS/TameWheel"
 cp Support/Info.plist "$APP_DIR/Contents/Info.plist"
+cp Support/AppIcon.icns "$APP_DIR/Contents/Resources/AppIcon.icns"
 
 # 本机临时签名，不依赖 Apple 开发者账号，也不等同于公证。
 codesign --force --sign - "$APP_DIR"

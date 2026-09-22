@@ -2,7 +2,7 @@
 
 **简体中文** | [English](README.en.md)
 
-[下载 macOS 版（公开测试）](https://github.com/gitman-g1/TameWheel/releases/tag/v0.3.0) · [安装说明](docs/install.md)
+[下载 macOS 版（公开测试）](https://github.com/gitman-g1/TameWheel/releases/latest) · [安装说明](docs/install.md)
 
 **鼠标滚轮更顺手，触控板依然自然。**
 

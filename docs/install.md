@@ -6,11 +6,11 @@
 
 ## 下载与安装
 
-1. 打开 [GitHub Release](https://github.com/gitman-g1/TameWheel/releases/tag/v0.3.0)，在 Assets 中下载 **TameWheel-0.3.0-universal.dmg**。
+1. 打开 [GitHub Release](https://github.com/gitman-g1/TameWheel/releases/latest)，在 Assets 中下载 **TameWheel-0.3.1-universal.dmg**。
 2. 打开 DMG，把 **TameWheel.app** 拖入 **Applications（应用程序）**。
 3. 推出磁盘映像，从“应用程序”打开小滚轮。它常驻菜单栏，不显示 Dock 图标。
 
-也可以下载 **TameWheel-0.3.0-universal.zip**，解压后将应用拖入“应用程序”。GitHub 自动提供的 `Source code` 是源码，不是安装包。
+也可以下载 **TameWheel-0.3.1-universal.zip**，解压后将应用拖入“应用程序”。GitHub 自动提供的 `Source code` 是源码，不是安装包。
 
 ## 首次打开
 
